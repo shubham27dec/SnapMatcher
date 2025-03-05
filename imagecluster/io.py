@@ -263,3 +263,46 @@ def get_image_data(imagedir, model_kwds=dict(layer='fc2'),
     if timestamps_kwds is not None:
         timestamps = read_timestamps(imagedir, **timestamps_kwds)
     return images, fingerprints, timestamps
+
+# adding three new methods here for persisting feedback learned from user
+
+def save_feedback(feedback_data, filepath='feedback_history.pkl'):
+    """
+    Feedback data ko pickle file mein save karta hai
+    """
+    try:
+        with open(filepath, 'wb') as f:
+            pickle.dump(feedback_data, f)
+        return True
+    except Exception as e:
+        print(f"Error saving feedback: {e}")
+        return False
+
+def load_feedback(filepath='feedback_history.pkl'):
+    """
+    Saved feedback data ko load karta hai
+    """
+    if not os.path.exists(filepath):
+        return None
+        
+    try:
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)
+    except Exception as e:
+        print(f"Error loading feedback: {e}")
+        return None
+
+def get_feedback_stats():
+    """
+    Feedback statistics generate karta hai
+    """
+    feedback = load_feedback()
+    if not feedback:
+        return None
+        
+    stats = {
+        'total_feedback': len(feedback),
+        'positive_feedback': sum(1 for f in feedback if f['accepted']),
+        'negative_feedback': sum(1 for f in feedback if not f['accepted'])
+    }
+    return stats

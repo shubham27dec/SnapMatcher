@@ -290,3 +290,37 @@ def print_cluster_stats(clusters):
     else:
         nimg = 0
     print("#images in clusters total: ", nimg)
+
+# adding two new methods here for smart clustering
+
+def calculate_smart_similarity(fingerprints, weights):
+    """
+    Enhanced similarity calculation using learned weights
+    """
+    base_sim = 0.5  # default similarity
+    
+    # Apply weights to adjust similarity threshold
+    adjusted_sim = (
+        base_sim * weights['similarity'] +
+        weights['pattern'] * 0.3 +
+        weights['structure'] * 0.2
+    )
+    
+    return min(0.9, max(0.1, adjusted_sim))
+
+def smart_cluster(fingerprints, feedback_system=None, learning_system=None):
+    """
+    Intelligent clustering using feedback and learning
+    """
+    if feedback_system is None:
+        # If no learning system, use basic clustering
+        return cluster(fingerprints, sim=0.5)
+    
+    # Get learned weights
+    weights = learning_system.get_current_weights()
+    
+    # Calculate smart similarity threshold
+    adjusted_sim = calculate_smart_similarity(fingerprints, weights)
+    
+    # Do clustering with adjusted similarity
+    return cluster(fingerprints, sim=adjusted_sim)

@@ -87,3 +87,51 @@ def make_links(clusters, cluster_dr):
                 link = pj(dr, os.path.basename(fn))
                 os.makedirs(os.path.dirname(link), exist_ok=True)
                 os.symlink(os.path.abspath(fn), link)
+
+# Adding methods for feedback system
+
+def visualize_smart_clusters(clusters, images, feedback_system=None):
+    """
+    Enhanced cluster visualization with feedback info
+    """
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    # Original cluster visualization
+    plot_clusters(clusters, images)
+    
+    if feedback_system:
+        # Add confidence scores for each cluster
+        for idx, (cluster_id, cluster) in enumerate(clusters.items()):
+            confidence = feedback_system.get_cluster_confidence(cluster_id)
+            ax.text(idx, -0.1, f"Confidence: {confidence:.2f}", 
+                   rotation=45, ha='right')
+
+def plot_learning_progress(feedback_history):
+    """
+    Learning progress over time dikhata hai
+    """
+    if not feedback_history:
+        return
+        
+    fig, ax = plt.subplots()
+    
+    times = [f['timestamp'] for f in feedback_history]
+    accepted = [f['accepted'] for f in feedback_history]
+    
+    # Plot success rate over time
+    ax.plot(times, accepted, 'g-', label='Success Rate')
+    ax.set_title('System Learning Progress')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Success Rate')
+    ax.legend()
+
+def show_cluster_stats(feedback_system):
+    """
+    Clustering statistics display karta hai
+    """
+    stats = feedback_system.get_cluster_confidence()
+    
+    fig, ax = plt.subplots()
+    ax.bar(['Good Clusters', 'Bad Clusters'], 
+           [stats['positive_feedback'], stats['negative_feedback']])
+    ax.set_title('Clustering Performance')
