@@ -10,13 +10,15 @@ class FeedbackSystem:
             'structure': 0.5
         }
     
-    def store_feedback(self, group_id, is_good):
-        feedback = {
-            'group_id': group_id,
-            'accepted': is_good,
-            'timestamp': time.time()
-        }
-        self.feedback_history.append(feedback)
+    def store_feedback(self, feedback_dict):
+        """Store feedback for multiple clusters"""
+        for cluster_id, is_good in feedback_dict.items():
+            feedback = {
+                'group_id': cluster_id,
+                'accepted': is_good,
+                'timestamp': time.time()
+            }
+            self.feedback_history.append(feedback)
         
     def get_cluster_confidence(self, cluster_id):
         # Calculate confidence based on past feedback

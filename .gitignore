@@ -6,3 +6,4 @@ build/
 doc/build
 doc/source/generated
 doc/sphinx-autodoc
+test_images
